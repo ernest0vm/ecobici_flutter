@@ -110,19 +110,14 @@ class _MapViewState extends State<MapView> {
   }
 
   Future<bool> checkLocationPermission() async {
-    PermissionHandler permissionHandler = PermissionHandler();
-
-    ///request Location Permission
-    PermissionStatus permission =
-        await permissionHandler.checkPermissionStatus(PermissionGroup.location);
-    print(permission.toString());
+    ///check status of location Permission
+    PermissionStatus permission = await Permission.location.status;
 
     if (permission != PermissionStatus.granted) {
-      Map<PermissionGroup, PermissionStatus> permissions =
-          await permissionHandler
-              .requestPermissions([PermissionGroup.location]);
+      ///request location Permission
+      Map<Permission, PermissionStatus> permissions = await [Permission.location].request();
 
-      if (permissions.containsKey(PermissionGroup.location)) {
+      if (permissions.containsKey(Permission.location)) {
         if (permissions.containsValue(PermissionStatus.granted)) {
           return true;
         } else {
@@ -233,12 +228,13 @@ class _MapViewState extends State<MapView> {
       key: mainScaffoldKey,
       endDrawer: filterDrawer(),
       body: SafeArea(
+        top: false,
+        bottom: false,
         child: Stack(
           alignment: Alignment.bottomCenter,
           children: <Widget>[
             GoogleMap(
-              padding: EdgeInsets.only(
-                  bottom: (MediaQuery.of(context).size.height / 2) - 60),
+              padding: EdgeInsets.only(bottom: (MediaQuery.of(context).size.height / 2) - 60),
               myLocationEnabled: true,
               myLocationButtonEnabled: false,
               onMapCreated: onMapCreated,
@@ -260,6 +256,7 @@ class _MapViewState extends State<MapView> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.white)),
+                    SizedBox(height: 10,),
                     Text("Cargando estaciones...", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.white),),
                   ],
                 ),
@@ -276,7 +273,7 @@ class _MapViewState extends State<MapView> {
     return Positioned(
       top: 8,
       right: 8,
-      child: Column(
+      child: SafeArea(child: Column(
         children: <Widget>[
           FloatingActionButton(
             heroTag: 'filter',
@@ -300,7 +297,7 @@ class _MapViewState extends State<MapView> {
             backgroundColor: MyColors.primaryColor,
           ),
         ],
-      ),
+      )),
     );
   }
 
@@ -314,7 +311,7 @@ class _MapViewState extends State<MapView> {
         decoration: BoxDecoration(
           color: MyColors.primaryColor,
           border: Border.all(width: 1, color: Colors.grey.withOpacity(0.5)),
-          borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
         ),
         child: Column(
           children: <Widget>[

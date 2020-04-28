@@ -22,7 +22,7 @@ dependencies:
   google_maps_flutter: ^0.5.24+1
   location: ^3.0.2
   geolocator: ^5.3.1
-  permission_handler: ^4.0.0
+  permission_handler: ^5.0.0+hotfix.4
   cupertino_icons: ^0.1.2
 
 #dependency_overrides:
